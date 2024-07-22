@@ -91,10 +91,30 @@ public class ChessMatch {
 		p.increaseMoveCount();
 		Piece capturated = board.removePiece(target);
 		board.placePiece(p, target);
+		
 		if(capturated != null) {
 			piecesOnTheBoard.remove(capturated);
 			capturedPieces.add(capturated);
 		}
+		
+		// Short Castling
+		if(p instanceof King && target.getColunw() == source.getColunw() + 2) {
+			Position T1 = new Position(source.getRow(), source.getColunw() + 3);
+			Position T2 = new Position(source.getRow(), source.getColunw() + 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(T1);
+			board.placePiece(rook, T2);
+			rook.increaseMoveCount();
+		}
+		
+		// Long Castling
+		if(p instanceof King && target.getColunw() == source.getColunw() - 2) {
+			Position T1 = new Position(source.getRow(), source.getColunw() - 4);
+			Position T2 = new Position(source.getRow(), source.getColunw() - 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(T1);
+			board.placePiece(rook, T2);
+			rook.increaseMoveCount();
+		}
+				
 		return capturated;
 	}
 	
@@ -106,6 +126,24 @@ public class ChessMatch {
 			board.placePiece(capturedPiece, target);
 			piecesOnTheBoard.add(capturedPiece);
 			capturedPieces.remove(capturedPiece);
+		}
+		
+		// Short Castling
+		if(p instanceof King && target.getColunw() == source.getColunw() + 2) {
+			Position T1 = new Position(source.getRow(), source.getColunw() + 3);
+			Position T2 = new Position(source.getRow(), source.getColunw() + 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(T2);
+			board.placePiece(rook, T1);
+			rook.decreaseMoveCount();
+		}
+		
+		// Long Castling
+		if(p instanceof King && target.getColunw() == source.getColunw() - 2) {
+			Position T1 = new Position(source.getRow(), source.getColunw() - 4);
+			Position T2 = new Position(source.getRow(), source.getColunw() - 1);
+			ChessPiece rook = (ChessPiece)board.removePiece(T2);
+			board.placePiece(rook, T1);
+			rook.decreaseMoveCount();
 		}
 	}
 	

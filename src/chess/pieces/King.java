@@ -23,7 +23,11 @@ public class King extends ChessPiece{
 	private boolean canMove(Position position) {
 		ChessPiece p = (ChessPiece)getBoard().piece(position);
 		return p == null || p.getColor() != getColor();
-		
+	}
+	
+	private boolean testRookCastling(Position pos) {
+		ChessPiece p = (ChessPiece)getBoard().piece(pos);
+		return p != null || p.getColor() == getColor() && p instanceof Rook && p.getMoveCount() == 0;
 	}
 	
 	@Override
@@ -80,6 +84,29 @@ public class King extends ChessPiece{
 			mat[p.getRow()][p.getColunw()] = true;
 		}
 		
+		// Move Castling
+		if ( getMoveCount() == 0 && !chessMatch.getCheck()) {
+			// Short Castling
+			Position p2 = new Position(position.getRow(), position.getColunw() + 3);
+			if(testRookCastling(p2)) {
+				Position p3 = new Position(position.getRow(), position.getColunw() + 1);
+				Position p4 = new Position(position.getRow(), position.getColunw() + 2);
+				if (getBoard().piece(p3) == null && getBoard().piece(p4) == null) {
+					mat[p.getRow()][p.getColunw() + 2] = true;
+				}
+			}
+			
+			// Long Castling
+			p2.setValues(position.getRow(), position.getColunw() - 4); 
+			if(testRookCastling(p2)) {
+				Position p3 = new Position(position.getRow(), position.getColunw() - 1);
+				Position p4 = new Position(position.getRow(), position.getColunw() - 2);
+				Position p5 = new Position(position.getRow(), position.getColunw() - 3);
+				if (getBoard().piece(p3) == null && getBoard().piece(p4) == null && getBoard().piece(p5) == null) {
+					mat[p.getRow()][p.getColunw() - 2] = true;
+				}
+			}
+		}
 		return mat;
 	}
 }
